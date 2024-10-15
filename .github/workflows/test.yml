@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            version: "1.3.2" # should be 1.3.2
+          - os: macos-latest
+            version: "1.3" # should be latest 1.3.x
+          - os: windows-latest
+            version: "1" # should be latest 1.x
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup catppuccin/catwalk
+        uses: ./
+        with:
+          catwalk-version: ${{ matrix.version }}
+      - run: catwalk --version
